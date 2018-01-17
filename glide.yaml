@@ -1,0 +1,4 @@
+package: karmabot
+import:
+- package: gopkg.in/tucnak/telebot.v2
+- package: github.com/nanobox-io/golang-scribble

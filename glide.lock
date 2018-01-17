@@ -1,0 +1,12 @@
+hash: 2611c4606c05a7628e26f64884db58a759b88ca572bebeaa2f310bca74178071
+updated: 2018-01-17T13:46:09.799790152-02:00
+imports:
+- name: github.com/jcelliott/lumber
+  version: dd349441af25132d146d7095c6693a15431fc9b1
+- name: github.com/nanobox-io/golang-scribble
+  version: ced58d671850da57ce8c11315424513b608083d7
+- name: github.com/pkg/errors
+  version: e881fd58d78e04cf6d0de1217f8707c8cc2249bc
+- name: gopkg.in/tucnak/telebot.v2
+  version: fd49f3f2600037b57ee38200b479796e1c14c590
+testImports: []
