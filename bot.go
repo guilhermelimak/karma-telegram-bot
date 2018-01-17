@@ -60,6 +60,7 @@ func initBot(db Connection) {
 
 		if m.Entities[0].Type == tb.EntityMention {
 			name := getUserName(*m)
+			oldKarma := db.get(name).Karma
 			amount := getKarmaChanges(m.Text)
 			println("Amount: ", amount)
 
@@ -69,6 +70,17 @@ func initBot(db Connection) {
 
 			if name == strings.Replace(m.Sender.Username, "@", "", 1) {
 				b.Send(m.Chat, "TA CHUPANDO TEU PROPRIO CU AE PORRA", tb.ModeMarkdown)
+
+				db.updateKarma(name, -1)
+				newKarma := db.get(name).Karma
+
+				formatted := fmt.Sprintf("*%s* karma has decreased from _%d_ to _%d_", name, oldKarma, newKarma)
+				_, err := b.Send(m.Chat, formatted, tb.ModeMarkdown)
+
+				if err != nil {
+					fmt.Printf("%s", err)
+				}
+
 				return
 			}
 
@@ -82,7 +94,7 @@ func initBot(db Connection) {
 				verb = "decreased"
 			}
 
-			formatted := fmt.Sprintf("*%s* karma has %s to _%d_", name, verb, newKarma)
+			formatted := fmt.Sprintf("*%s* karma has %s from _%d_ to _%d_", name, verb, oldKarma, newKarma)
 			_, err := b.Send(m.Chat, formatted, tb.ModeMarkdown)
 
 			if err != nil {
