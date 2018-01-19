@@ -68,7 +68,8 @@ func initBot(db Connection) {
 			}
 
 			if name == strings.Replace(m.Sender.Username, "@", "", 1) {
-				b.Send(m.Chat, "TA CHUPANDO TEU PROPRIO CU AE PORRA", tb.ModeMarkdown)
+				selfMessage := []byte{84, 65, 32, 67, 72, 85, 80, 65, 78, 68, 79, 32, 84, 69, 85, 32, 80, 82, 79, 80, 82, 73, 79, 32, 67, 85, 32, 65, 69, 32, 80, 79, 82, 82, 65}
+				b.Send(m.Chat, string(selfMessage), tb.ModeMarkdown)
 				return
 			}
 
