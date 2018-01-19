@@ -1,5 +1,5 @@
 hash: 2611c4606c05a7628e26f64884db58a759b88ca572bebeaa2f310bca74178071
-updated: 2018-01-17T13:46:09.799790152-02:00
+updated: 2018-01-19T03:42:54.79066615Z
 imports:
 - name: github.com/jcelliott/lumber
   version: dd349441af25132d146d7095c6693a15431fc9b1
@@ -8,5 +8,5 @@ imports:
 - name: github.com/pkg/errors
   version: e881fd58d78e04cf6d0de1217f8707c8cc2249bc
 - name: gopkg.in/tucnak/telebot.v2
-  version: fd49f3f2600037b57ee38200b479796e1c14c590
+  version: 2cebf54e145e9a5733e1220ddce94e338b4f90ef
 testImports: []
