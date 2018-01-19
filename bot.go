@@ -1,11 +1,11 @@
 package main
 
 import (
+	"bytes"	
 	"fmt"
 	"log"
 	"strings"
 	"time"
-
 	tb "gopkg.in/tucnak/telebot.v2"
 )
 
@@ -28,10 +28,18 @@ func initBot(db Connection) {
 		b.Send(m.Sender, "FUCK YOU BITCH")
 	})
 
-	b.Handle("/listAll", func(m *tb.Message) {
+	b.Handle("/list", func(m *tb.Message) {
 		users := db.getAllRecords()
 
-		_, err := b.Send(m.Chat, fmt.Sprintf("%+v", users), tb.ModeMarkdown)
+		var buffer bytes.Buffer
+
+		for index := 0; index < len(users); index++ {
+			user := users[index]
+			formatted := fmt.Sprintf(" - *%s*: _%d_\n", user.ID, user.Karma)
+			buffer.WriteString(formatted)
+		}
+
+		_, err := b.Send(m.Chat, buffer.String(), tb.ModeMarkdown)
 
 		if err != nil {
 			fmt.Printf("%s", err)
