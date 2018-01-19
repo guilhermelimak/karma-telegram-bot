@@ -82,7 +82,7 @@ func initBot(db Connection) {
 				db.updateKarma(name, -1)
 				newKarma := db.get(name).Karma
 
-				formatted := fmt.Sprintf("*%s* karma has decreased to _%d_ (%d)", name, newKarma, amount)
+				formatted := fmt.Sprintf("*%s* karma has decreased to _%d_ (%d)", name, newKarma, -1)
 				_, err := b.Send(m.Chat, formatted, tb.ModeMarkdown)
 
 				if err != nil {
