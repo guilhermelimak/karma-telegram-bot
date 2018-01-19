@@ -69,52 +69,51 @@ func initBot(db Connection) {
 
 		if m.Entities[0].Type == tb.EntityMention {
 			name := getUserName(*m)
-			amount := getKarmaChanges(m.Text)
+			amount := calcKarmaChanges(m.Text)
 
 			if amount == 0 {
 				return
 			}
 
 			if name == strings.Replace(m.Sender.Username, "@", "", 1) {
-				selfMessage := []byte{84, 65, 32, 67, 72, 85, 80, 65, 78, 68, 79, 32, 84, 69, 85, 32, 80, 82, 79, 80, 82, 73, 79, 32, 67, 85, 32, 65, 69, 32, 80, 79, 82, 82, 65}
-				b.Send(m.Chat, string(selfMessage), tb.ModeMarkdown)
-
-				db.updateKarma(name, -1)
-				newKarma := db.get(name).Karma
-
-				formatted := fmt.Sprintf("*%s* karma has decreased to _%d_ (%d)", name, newKarma, -1)
-				_, err := b.Send(m.Chat, formatted, tb.ModeMarkdown)
-
-				if err != nil {
-					fmt.Printf("%s", err)
-				}
-
+				printSelfMessage(m.Chat, b)
+				setKarma(name, -1, m.Chat, db, b)
 				return
 			}
 
-			db.updateKarma(name, amount)
-			newKarma := db.get(name).Karma
-
-			var verb string
-			if amount > 0 {
-				verb = "increased"
-			} else {
-				verb = "decreased"
-			}
-
-			formatted := fmt.Sprintf("*%s* karma has %s to _%d_ (%d)", name, verb, newKarma, amount)
-			_, err := b.Send(m.Chat, formatted, tb.ModeMarkdown)
-
-			if err != nil {
-				fmt.Printf("%s", err)
-			}
+			setKarma(name, amount, m.Chat, db, b)
 		}
 	})
 
 	b.Start()
 }
 
-func getKarmaChanges(message string) int {
+func printSelfMessage(chat *tb.Chat, b *tb.Bot) {
+	selfMessage := []byte{84, 65, 32, 67, 72, 85, 80, 65, 78, 68, 79, 32, 84, 69, 85, 32, 80, 82, 79, 80, 82, 73, 79, 32, 67, 85, 32, 65, 69, 32, 80, 79, 82, 82, 65}
+	b.Send(chat, string(selfMessage), tb.ModeMarkdown)
+}
+
+func setKarma(name string, amount int, chat *tb.Chat, db Connection, b *tb.Bot) {
+	var verb string
+
+	if amount > 0 {
+		verb = "increased"
+	} else {
+		verb = "decreased"
+	}
+
+	db.updateKarma(name, amount)
+	newKarma := db.get(name).Karma
+
+	formatted := fmt.Sprintf("*%s* karma has %s to _%d_ (%d)", verb, name, newKarma, amount)
+	_, err := b.Send(chat, formatted, tb.ModeMarkdown)
+
+	if err != nil {
+		fmt.Printf("%s", err)
+	}
+}
+
+func calcKarmaChanges(message string) int {
 	change := 0
 	msg := strings.Split(message, "")
 
