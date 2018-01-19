@@ -1,11 +1,11 @@
 package main
 
 import (
+	"bytes"	
 	"fmt"
 	"log"
 	"strings"
 	"time"
-
 	tb "gopkg.in/tucnak/telebot.v2"
 )
 
@@ -28,10 +28,18 @@ func initBot(db Connection) {
 		b.Send(m.Sender, "FUCK YOU BITCH")
 	})
 
-	b.Handle("/listAll", func(m *tb.Message) {
+	b.Handle("/list", func(m *tb.Message) {
 		users := db.getAllRecords()
 
-		_, err := b.Send(m.Chat, fmt.Sprintf("%+v", users), tb.ModeMarkdown)
+		var buffer bytes.Buffer
+
+		for index := 0; index < len(users); index++ {
+			user := users[index]
+			formatted := fmt.Sprintf(" - *%s*: _%d_\n", user.ID, user.Karma)
+			buffer.WriteString(formatted)
+		}
+
+		_, err := b.Send(m.Chat, buffer.String(), tb.ModeMarkdown)
 
 		if err != nil {
 			fmt.Printf("%s", err)
@@ -60,6 +68,7 @@ func initBot(db Connection) {
 
 		if m.Entities[0].Type == tb.EntityMention {
 			name := getUserName(*m)
+			oldKarma := db.get(name).Karma
 			amount := getKarmaChanges(m.Text)
 			println("Amount: ", amount)
 
@@ -70,6 +79,18 @@ func initBot(db Connection) {
 			if name == strings.Replace(m.Sender.Username, "@", "", 1) {
 				selfMessage := []byte{84, 65, 32, 67, 72, 85, 80, 65, 78, 68, 79, 32, 84, 69, 85, 32, 80, 82, 79, 80, 82, 73, 79, 32, 67, 85, 32, 65, 69, 32, 80, 79, 82, 82, 65}
 				b.Send(m.Chat, string(selfMessage), tb.ModeMarkdown)
+				b.Send(m.Chat, "TA CHUPANDO TEU PROPRIO CU AE PORRA", tb.ModeMarkdown)
+
+				db.updateKarma(name, -1)
+				newKarma := db.get(name).Karma
+
+				formatted := fmt.Sprintf("*%s* karma has decreased from _%d_ to _%d_", name, oldKarma, newKarma)
+				_, err := b.Send(m.Chat, formatted, tb.ModeMarkdown)
+
+				if err != nil {
+					fmt.Printf("%s", err)
+				}
+
 				return
 			}
 
@@ -83,7 +104,7 @@ func initBot(db Connection) {
 				verb = "decreased"
 			}
 
-			formatted := fmt.Sprintf("*%s* karma has %s to _%d_", name, verb, newKarma)
+			formatted := fmt.Sprintf("*%s* karma has %s from _%d_ to _%d_", name, verb, oldKarma, newKarma)
 			_, err := b.Send(m.Chat, formatted, tb.ModeMarkdown)
 
 			if err != nil {
