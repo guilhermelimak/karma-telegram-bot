@@ -24,11 +24,7 @@ func initBot(db Connection) {
 		log.Fatal(err)
 		return
 	}
-
-	b.Handle("/help", func(m *tb.Message) {
-		b.Send(m.Sender, "FUCK YOU BITCH")
-	})
-
+	
 	b.Handle("/list", func(m *tb.Message) {
 		users := db.getAllRecords()
 
