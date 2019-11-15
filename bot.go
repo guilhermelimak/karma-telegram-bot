@@ -85,8 +85,7 @@ func initBot(db Connection) {
 }
 
 func printSelfMessage(chat *tb.Chat, b *tb.Bot) {
-	selfMessage := []byte{84, 65, 32, 67, 72, 85, 80, 65, 78, 68, 79, 32, 84, 69, 85, 32, 80, 82, 79, 80, 82, 73, 79, 32, 67, 85, 32, 65, 69, 32, 80, 79, 82, 82, 65}
-	b.Send(chat, string(selfMessage), tb.ModeMarkdown)
+	b.Send(chat, "You cannot change your own karma", tb.ModeMarkdown)
 }
 
 func setKarma(name string, amount int, chat *tb.Chat, db Connection, b *tb.Bot) {
